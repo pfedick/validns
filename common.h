@@ -34,6 +34,7 @@ extern struct file_info *file_info;
 #define POLICY_DNSKEY 7
 #define POLICY_TLSA_HOST 8
 #define POLICY_KSK_EXISTS 9
+#define POLICY_NSEC3_CONSISTENCY 10
 #define POLICY_DS_REQUIRES_NS 11
 
 #define MAX_TIMES_TO_CHECK 32

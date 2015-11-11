@@ -384,6 +384,23 @@ run('./validns', @threads, '-t1447282800', '-pds-requires-ns','-s', 't/issues/46
 is(rc, 0, 'policy ds-requires-ns: zone without error and active policy returns 0');
 unlike(stderr, qr/DS-RR without corresponding NS-RR/m, "policy ds-requires-ns: zone without error does not moan an error");
 
+run('./validns', @threads, '-t1447282800', '-pnsec3-consistency', '-s', 't/issues/42-consistency-of-nsec3-chain/de.test.inconsistent_algorithm');
+isnt(rc, 0, 'inconsistent algorithm in NSEC3 not detected');
+#print stderr;
+like(stderr, qr/unrecognized or unsupported hash algorithm$/m, "inconsistent algorithm in NSEC3 detected");
+
+run('./validns', @threads, '-t1447282800', '-pnsec3-consistency', '-s', 't/issues/42-consistency-of-nsec3-chain/de.test.inconsistent_flags');
+isnt(rc, 0, 'inconsistent flags in NSEC3 not detected');
+like(stderr, qr/inconsistent NSEC3 flags$/m, "inconsistent flags in NSEC3 detected");
+
+run('./validns', @threads, '-t1447282800', '-pnsec3-consistency', '-s', 't/issues/42-consistency-of-nsec3-chain/de.test.inconsistent_iterations');
+isnt(rc, 0, 'inconsistent iterations in NSEC3 not detected');
+like(stderr, qr/inconsistent NSEC3 iterations$/m, "inconsistent iterations in NSEC3 detected");
+
+#run('./validns', @threads, '-t1447282800', '-pnsec3-consistency', '-s', 't/issues/42-consistency-of-nsec3-chain/de.test.inconsistent_salt');
+#isnt(rc, 0, 'inconsistent salt in NSEC3 not detected');
+#like(stderr, qr/inconsistent NSEC3 salt$/m, "inconsistent salt in NSEC3 detected");
+
 
 }
 
