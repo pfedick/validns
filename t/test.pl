@@ -356,7 +356,6 @@ isnt(rc, 0, 'multitime: valid signed zone with timestamps in the past');
 @e = split /\n/, stderr;
 like(shift @e, qr/signature is too old/, "multitime: signature is too old");
 
-
 run('./validns', @threads, '-t1447282800', '-s', 't/issues/45-counting-of-records/de.test.signed');
 is(rc, 0, 'valid zone parses ok');
 like(stdout, qr/^record count by type:$/m, "record count exists");
@@ -372,6 +371,19 @@ like(stdout, qr/^\s+DNSKEY: 2$/m, "correct amount of DNSKEY-RR counted");
 like(stdout, qr/^\s+NSEC3: 39$/m, "correct amount of NSEC3-RR counted");
 like(stdout, qr/^\s+NSEC3PARAM: 1$/m, "correct amount of NSEC3-RR counted");
 like(stdout, qr/^\s+RRSIG: 72$/m, "correct amount of RRSIG-RR counted");
+
+run('./validns', @threads, '-t1447282800','-s', 't/issues/46-policy_ds_requires_ns/de.test.signed_ds_without_ns');
+is(rc, 0, 'policy ds-requires-ns: ds without ns gets not detected, when policy is not active');
+unlike(stderr, qr/DS-RR without corresponding NS-RR/m, "policy ds-requires-ns: DS-RR without corresponding NS-RR detected");
+
+run('./validns', @threads, '-t1447282800', '-pds-requires-ns','-s', 't/issues/46-policy_ds_requires_ns/de.test.signed_ds_without_ns');
+isnt(rc, 0, 'policy ds-requires-ns: ds without ns gets detected, when policy is active');
+like(stderr, qr/DS-RR without corresponding NS-RR/m, "policy ds-requires-ns: DS-RR without corresponding NS-RR detected");
+
+run('./validns', @threads, '-t1447282800', '-pds-requires-ns','-s', 't/issues/46-policy_ds_requires_ns/de.test.signed_ok');
+is(rc, 0, 'policy ds-requires-ns: zone without error and active policy returns 0');
+unlike(stderr, qr/DS-RR without corresponding NS-RR/m, "policy ds-requires-ns: zone without error does not moan an error");
+
 
 }
 
